@@ -39,7 +39,14 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
+		"@hono/valibot-validator": "^0.5.2",
 		"@neondatabase/serverless": "^0.10.4",
-		"drizzle-orm": "^0.40.0"
+		"better-auth": "^1.2.4",
+		"clsx": "^2.1.1",
+		"daisyui": "^5.0.9",
+		"drizzle-orm": "^0.40.0",
+		"hono": "^4.7.5",
+		"tailwind-merge": "^3.0.2",
+		"valibot": "^1.0.0"
 	}
 }
