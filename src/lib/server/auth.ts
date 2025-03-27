@@ -25,14 +25,10 @@ export const auth = betterAuth({
 			clientId: env.GITHUB_CLIENT_ID!,
 			clientSecret: env.GITHUB_CLIENT_SECRET!,
 		},
-		// google: {
-		// 	clientId: env.GOOGLE_CLIENT_ID!,
-		// 	clientSecret: env.GOOGLE_CLIENT_SECRET!,
-		// },
-		// discord: {
-		// 	clientId: env.DISCORD_CLIENT_ID!,
-		// 	clientSecret: env.DISCORD_CLIENT_SECRET!,
-		// },
+		spotify: {
+			clientId: env.SPOTIFY_CLIENT_ID!,
+			clientSecret: env.SPOTIFY_CLIENT_SECRET!,
+		},
 	},
 
 	// https://www.better-auth.com/docs/authentication/email-password
