@@ -146,7 +146,7 @@ export const router = new Hono<AuthRouter>({ strict: true })
     });
   })
 
-  .get("/test", async (c) => {
+  .get("/top-tracks", async (c) => {
     const user = c.get("user");
     const session = c.get("session");
 
