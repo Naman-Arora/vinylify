@@ -3,7 +3,9 @@ import { hc } from "hono/client";
 
 let browserClient: ReturnType<typeof hc<Router>>;
 
-export const makeClient = (fetch: Window["fetch"]) => {
+export const makeAPIClient = (
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
+) => {
   const isBrowser = typeof window !== "undefined";
   const origin = isBrowser ? window.location.origin : "";
 
@@ -11,11 +13,11 @@ export const makeClient = (fetch: Window["fetch"]) => {
     return browserClient;
   }
 
-  const client = hc<Router>(origin + "/api", { fetch });
+  const api = hc<Router>(origin + "/api", { fetch });
 
   if (isBrowser) {
-    browserClient = client;
+    browserClient = api;
   }
 
-  return client;
+  return api;
 };
