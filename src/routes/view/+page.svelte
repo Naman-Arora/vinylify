@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import { Canvas } from "@threlte/core";
   import { toast } from "svelte-sonner";
+  // import SongInfo from "@components/SongInfo.svelte";
 
   let { data } = $props();
 
@@ -18,6 +19,11 @@
     message: "An error occured while creating a shareable link of your vinyls. Please try again.",
     success: false,
   });
+
+  // let songDetails = $derived.by(() => {
+  //   if (songIndex) return data.info.items[songIndex];
+  //   return null;
+  // });
 
   async function onCreatePlaylist() {
     creatingPlaylist = true;
@@ -141,7 +147,7 @@
     onclick={onCreatePlaylist}
     disabled={creatingPlaylist}
     >Create Playlist
-    {#if shareMutating}
+    {#if creatingPlaylist}
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -217,6 +223,13 @@
     {/if}
   </button>
 </div>
+
+<!-- <SongInfo
+  songFocused={songDetails === null ? false : true}
+  songName={songDetails?.name}
+  artistName={songDetails?.album.artists[0].name}
+  albumName={songDetails?.album.name}
+/> -->
 
 <main class="h-screen w-screen">
   <Canvas>

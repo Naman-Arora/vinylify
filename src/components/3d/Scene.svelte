@@ -127,7 +127,8 @@
   });
 
   let virtualScroll = $state(0);
-  let touchStartY = $state(0);
+  // let touchStartY = $state(0);
+  let touchStartX = $state(0);
 
   onMount(() => {
     // Mouse Scroll (Desktop)
@@ -140,16 +141,17 @@
     // Touch Drag (Mobile)
     window.addEventListener("touchstart", (event) => {
       if (focusedCard !== null) return;
-      touchStartY = event.touches[0].clientY;
+      // touchStartY = event.touches[0].clientY;
+      touchStartX = event.touches[0].clientX;
     });
 
     window.addEventListener("touchmove", (event) => {
       if (focusedCard !== null) return;
-      let touchMoveY = event.touches[0].clientY;
-      let deltaY = touchStartY - touchMoveY;
-      virtualScroll += deltaY * 2; // Increase sensitivity
+      let touchMoveX = event.touches[0].clientX; // Get current touch position
+      let deltaX = touchStartX - touchMoveX; // Calculate horizontal movement
+      virtualScroll += deltaX * 2; // Adjust sensitivity
       cardGroup.posX.set(-virtualScroll * 0.002, { duration: 0 });
-      touchStartY = touchMoveY;
+      touchStartX = touchMoveX;
     });
 
     if ((innerWidth.current || Infinity) < 600) {
