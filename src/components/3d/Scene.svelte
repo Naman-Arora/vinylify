@@ -12,6 +12,7 @@
   import { T, useTask, useThrelte } from "@threlte/core";
   import { interactivity, ImageMaterial, Text, Suspense } from "@threlte/extras";
   import { degreesToEuler } from "$lib/3d";
+  import { onMount } from "svelte";
 
   interactivity();
 
@@ -25,7 +26,7 @@
 
   const PICTURE_BOX_WIDTH = 1.5;
   const PICTURE_TEXT_POS_X = PICTURE_BOX_WIDTH / 2 + 0.001;
-  const SCROLL_DELTA = 0.01;
+  // const SCROLL_DELTA = 0.01;
 
   const COLORS = {
     black: new Color("black"),
@@ -110,6 +111,33 @@
   useTask((delta) => {
     gridShaderMaterial.uniforms.iTime.value += delta;
   });
+
+  let virtualScroll = $state(0);
+  let touchStartY = $state(0);
+
+  onMount(() => {
+    // Mouse Scroll (Desktop)
+    window.addEventListener("wheel", (event) => {
+      if (focusedCard !== null) return;
+      virtualScroll += event.deltaY;
+      cardGroup.posX.set(-virtualScroll * 0.002, { duration: 0 });
+    });
+
+    // Touch Drag (Mobile)
+    window.addEventListener("touchstart", (event) => {
+      if (focusedCard !== null) return;
+      touchStartY = event.touches[0].clientY;
+    });
+
+    window.addEventListener("touchmove", (event) => {
+      if (focusedCard !== null) return;
+      let touchMoveY = event.touches[0].clientY;
+      let deltaY = touchStartY - touchMoveY;
+      virtualScroll += deltaY * 2; // Increase sensitivity
+      cardGroup.posX.set(-virtualScroll * 0.002, { duration: 0 });
+      touchStartY = touchMoveY;
+    });
+  });
 </script>
 
 <T.PerspectiveCamera
@@ -121,24 +149,7 @@
 
 <T.AmbientLight color={COLORS.white} intensity={10} />
 
-<T.Mesh
-  name="plane"
-  position={[0, 0, -5]}
-  onwheel={(e) => {
-    e.stopPropagation();
-    if (e.nativeEvent.deltaY > 0) {
-      if (focusedCard !== null) return;
-      cardGroup.posX.set(cardGroup.posX.current - SCROLL_DELTA, {
-        duration: 0,
-      });
-    } else {
-      if (focusedCard !== null) return;
-      cardGroup.posX.set(cardGroup.posX.current + SCROLL_DELTA, {
-        duration: 0,
-      });
-    }
-  }}
->
+<T.Mesh name="plane" position={[0, 0, -5]}>
   <T.PlaneGeometry args={[20, 10]} />
   <T is={gridShaderMaterial} />
 </T.Mesh>
