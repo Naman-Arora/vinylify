@@ -4,7 +4,6 @@ import { PUBLIC_BASE_URL } from "$env/static/public";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
-
 export const auth = betterAuth({
   baseURL: PUBLIC_BASE_URL,
   database: drizzleAdapter(db, {
@@ -28,7 +27,6 @@ export const auth = betterAuth({
     spotify: {
       clientId: env.SPOTIFY_CLIENT_ID,
       clientSecret: env.SPOTIFY_CLIENT_SECRET,
-      disableDefaultScope: true,
       scope: [
         "user-read-email",
         "user-read-private",

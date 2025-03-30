@@ -1,7 +1,7 @@
 import { db } from "$lib/server/db";
 import { auth } from "$lib/server/auth";
 import { env } from "$env/dynamic/private";
-import { account, share } from "$lib/server/db/schema";
+import { account, share, user } from "$lib/server/db/schema";
 import ky from "ky";
 import { Hono } from "hono";
 import * as v from "valibot";
@@ -139,20 +139,8 @@ export const router = new Hono<AuthRouter>({ strict: true })
     c.set("session", session.session);
     return next();
   })
-  .get("/", (c) => c.text("Hello World"))
   .on(["POST", "GET"], "/auth/*", (c) => {
     return auth.handler(c.req.raw);
-  })
-  .get("/session", async (c) => {
-    const session = c.get("session");
-    const user = c.get("user");
-
-    if (!user) return c.body(null, 401);
-
-    return c.json({
-      session,
-      user,
-    });
   })
   .get(
     "/top-tracks",
@@ -171,13 +159,13 @@ export const router = new Hono<AuthRouter>({ strict: true })
       const user = c.get("user");
       const session = c.get("session");
 
-      if (!user || !session) return c.json({ message: "Unauthorized" }, 401);
+      if (!user || !session) return c.json({ error: "Unauthorized" }, 401);
 
       const acc = await db.select().from(account).where(eq(account.userId, user.id));
 
-      if (!acc || !acc[0] || !acc[0].accessToken) return c.json({ message: "Unauthorized" }, 401);
+      if (!acc || !acc[0] || !acc[0].accessToken) return c.json({ error: "Unauthorized" }, 401);
 
-      const { limit = 25, time_range = "long_term" } = c.req.valid("query");
+      const { limit = 40, time_range = "long_term" } = c.req.valid("query");
 
       let token = acc[0].accessToken;
 
@@ -226,7 +214,14 @@ export const router = new Hono<AuthRouter>({ strict: true })
       const { id } = c.req.valid("query");
 
       const rows = await db.select().from(share).where(eq(share.id, id));
-      if (!rows) return c.json({ message: "Not found" }, 404);
+      if (!rows) return c.json({ error: "Not found" }, 404);
+
+      const userId = rows[0].userId;
+      const userDetails = await db.select().from(user).where(eq(user.id, userId));
+      let userName = userDetails[0].name;
+      if (userName.includes(" ")) {
+        userName = userName.split(" ")[0];
+      }
 
       const trackIds = rows[0].trackIds.join(",");
       const accessToken = await spotifyAccessToken();
@@ -243,7 +238,7 @@ export const router = new Hono<AuthRouter>({ strict: true })
       //   title:
       // }));
 
-      return c.json(tracks.tracks);
+      return c.json({ tracks: tracks.tracks, userName });
     },
   )
   .post("/share", vValidator("json", v.array(v.pipe(v.string(), v.minLength(1)))), async (c) => {
