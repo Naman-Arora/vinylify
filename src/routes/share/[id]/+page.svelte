@@ -11,7 +11,7 @@
 </script>
 
 <svelte:head>
-  <title>{data.userName}'s Top Tracks</title>
+  <title>Vinylify | {data.userName}'s Top Tracks</title>
 </svelte:head>
 
 <main class="h-screen w-screen">

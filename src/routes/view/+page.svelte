@@ -46,7 +46,7 @@
 </script>
 
 <svelte:head>
-  <title>Vinylify | View</title>
+  <title>Vinylify | Your Top Songs</title>
 </svelte:head>
 
 <dialog bind:this={dialog} class="modal">
