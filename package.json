@@ -53,6 +53,7 @@
     "hono": "^4.7.5",
     "ky": "^1.7.5",
     "nanoid": "^5.1.5",
+    "svelte-sonner": "https://pkg.pr.new/wobsoriano/svelte-sonner@126",
     "tailwind-merge": "^3.0.2",
     "three": "^0.174.0",
     "valibot": "^1.0.0"
