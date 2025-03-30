@@ -7,12 +7,13 @@
     ShaderMaterial,
     Vector2,
   } from "three";
+  import { onMount } from "svelte";
   import { Tween } from "svelte/motion";
   import { quadInOut } from "svelte/easing";
+  import { innerWidth } from "svelte/reactivity/window";
   import { T, useTask, useThrelte } from "@threlte/core";
   import { interactivity, ImageMaterial, Text, Suspense } from "@threlte/extras";
   import { degreesToEuler } from "$lib/3d";
-  import { onMount } from "svelte";
 
   interactivity();
 
@@ -74,6 +75,9 @@
   let cards = $state<Card[]>(
     topTracks.map(({ imageUrl, title }, index) => new Card(imageUrl, title, -0.5 + index * 0.175)),
   );
+
+  // $inspect(innerWidth.current);
+  // $inspect(cardGroup.posX.current);
 
   const gridShaderMaterial = new ShaderMaterial({
     uniforms: {
@@ -137,6 +141,11 @@
       cardGroup.posX.set(-virtualScroll * 0.002, { duration: 0 });
       touchStartY = touchMoveY;
     });
+
+    if ((innerWidth.current || Infinity) < 600) {
+      cardGroup.posX.set(0.22, { duration: 0 });
+      camera.posY.set(0, { duration: 0 });
+    }
   });
 </script>
 
@@ -150,7 +159,7 @@
 <T.AmbientLight color={COLORS.white} intensity={10} />
 
 <T.Mesh name="plane" position={[0, 0, -5]}>
-  <T.PlaneGeometry args={[20, 10]} />
+  <T.PlaneGeometry args={[30, 30]} />
   <T is={gridShaderMaterial} />
 </T.Mesh>
 
@@ -180,7 +189,10 @@
           card.posZ.set(dist, { duration: 500 });
           cardGroup.posX.set(-card.posX.current, { duration: 500 });
           card.rotationY.set(0, { duration: 500, delay: 500 });
-          camera.zoom.set(1.5, { duration: 1500, delay: 500 });
+          camera.zoom.set((innerWidth.current || Infinity) < 600 ? 0.75 : 1.5, {
+            duration: 1500,
+            delay: 500,
+          });
           focusedCard = i;
         }}
       >
