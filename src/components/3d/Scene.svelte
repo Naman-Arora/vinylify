@@ -23,11 +23,8 @@
 
   let { topTracks }: Props = $props();
 
-  // console.log(`topTracks:`, topTracks);
-
   const PICTURE_BOX_WIDTH = 1.5;
   const PICTURE_TEXT_POS_X = PICTURE_BOX_WIDTH / 2 + 0.001;
-  // const SCROLL_DELTA = 0.01;
 
   const COLORS = {
     black: new Color("black"),
@@ -43,17 +40,31 @@
   class Card {
     title: string;
     imageUrl: string;
-    posX: Tween<number>;
-    posY = new Tween(0, { easing: quadInOut });
-    posZ = new Tween(0, { easing: quadInOut });
-    rotationX = new Tween(0, { easing: quadInOut });
-    rotationY = new Tween(90, { easing: quadInOut });
-    rotationZ = new Tween(0, { easing: quadInOut });
+    positionX: Tween<number>;
+    positionY: Tween<number>;
+    positionZ: Tween<number>;
+    rotationX: Tween<number>;
+    rotationY: Tween<number>;
+    rotationZ: Tween<number>;
 
-    constructor(imageUrl: string, title: string, posX: number) {
+    constructor(
+      imageUrl: string,
+      title: string,
+      positionX: number,
+      positionY: number,
+      positionZ: number = 0,
+      rotationX: number = 0,
+      rotationY: number = 90,
+      rotationZ: number = 0,
+    ) {
       this.title = title;
       this.imageUrl = imageUrl;
-      this.posX = new Tween(posX, { easing: quadInOut });
+      this.positionX = new Tween(positionX, { easing: quadInOut });
+      this.positionY = new Tween(positionY, { easing: quadInOut });
+      this.positionZ = new Tween(positionZ, { easing: quadInOut });
+      this.rotationX = new Tween(rotationX, { easing: quadInOut });
+      this.rotationY = new Tween(rotationY, { easing: quadInOut });
+      this.rotationZ = new Tween(rotationZ, { easing: quadInOut });
     }
   }
 
@@ -73,11 +84,10 @@
   let focusedCard = $state<number | null>(null);
 
   let cards = $state<Card[]>(
-    topTracks.map(({ imageUrl, title }, index) => new Card(imageUrl, title, -0.5 + index * 0.175)),
+    topTracks.map(
+      ({ imageUrl, title }, index) => new Card(imageUrl, title, -0.5 + index * 0.175, 0),
+    ),
   );
-
-  // $inspect(innerWidth.current);
-  // $inspect(cardGroup.posX.current);
 
   const gridShaderMaterial = new ShaderMaterial({
     uniforms: {
@@ -169,7 +179,7 @@
     {#each cards as card, i (i)}
       <T.Group
         name={card.title}
-        position={[card.posX.current, card.posY.current, card.posZ.current]}
+        position={[card.positionX.current, card.positionY.current, card.positionZ.current]}
         rotation={degreesToEuler(0, card.rotationY.current, 0)}
         onclick={(e) => {
           e.stopPropagation();
@@ -179,15 +189,15 @@
           if (focusedCard === i) {
             card.rotationY.set(90, { duration: 500 });
             camera.zoom.set(1, { duration: 500 });
-            card.posZ.set(0, { duration: 500, delay: 500 });
+            card.positionZ.set(0, { duration: 500, delay: 500 });
             cardGroup.posZ.set(0, { duration: 500, delay: 500 });
             focusedCard = null;
             return;
           }
           const dist = PICTURE_BOX_WIDTH + 0.05;
           cardGroup.posZ.set(-dist, { duration: 500 });
-          card.posZ.set(dist, { duration: 500 });
-          cardGroup.posX.set(-card.posX.current, { duration: 500 });
+          card.positionZ.set(dist, { duration: 500 });
+          cardGroup.posX.set(-card.positionX.current, { duration: 500 });
           card.rotationY.set(0, { duration: 500, delay: 500 });
           camera.zoom.set((innerWidth.current || Infinity) < 600 ? 0.75 : 1.5, {
             duration: 1500,

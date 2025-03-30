@@ -1,7 +1,7 @@
 import { db } from "$lib/server/db";
 import { auth } from "$lib/server/auth";
 import { env } from "$env/dynamic/private";
-import { account, share, user } from "$lib/server/db/schema";
+import { account, share, user, type Account } from "$lib/server/db/schema";
 import ky from "ky";
 import { Hono } from "hono";
 import * as v from "valibot";
@@ -106,7 +106,7 @@ type SpotifyAccessToken = {
   expires_in: number;
 };
 
-const spotifyAccessToken = async () => {
+const spotifyServerAccessToken = async () => {
   const authToken = Buffer.from(`${env.SPOTIFY_CLIENT_ID!}:${env.SPOTIFY_CLIENT_SECRET!}`).toString(
     "base64",
   );
@@ -122,6 +122,37 @@ const spotifyAccessToken = async () => {
     .json<SpotifyAccessToken>();
 
   return access_token;
+};
+
+const spotifyUserAccessToken = async (acc: Account) => {
+  let token = acc.accessToken;
+
+  if (acc.accessTokenExpiresAt!.getTime() < Date.now()) {
+    const refreshDetails = await ky
+      .post<SpotifyRefresh>("https://accounts.spotify.com/api/token", {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: acc.refreshToken!,
+          client_id: env.SPOTIFY_CLIENT_ID,
+        }),
+      })
+      .json();
+
+    await db
+      .update(account)
+      .set({
+        accessToken: refreshDetails.access_token,
+        accessTokenExpiresAt: new Date(Date.now() + refreshDetails.expires_in * 1000),
+        refreshToken: refreshDetails.refresh_token,
+      })
+      .where(eq(account.id, acc.id));
+
+    token = refreshDetails.access_token;
+  }
+  return token;
 };
 
 export const router = new Hono<AuthRouter>({ strict: true })
@@ -167,32 +198,7 @@ export const router = new Hono<AuthRouter>({ strict: true })
 
       const { limit = 40, time_range = "long_term" } = c.req.valid("query");
 
-      let token = acc[0].accessToken;
-
-      if (acc[0].accessTokenExpiresAt?.getTime() || 0 < Date.now()) {
-        const refreshDetails = await ky
-          .post<SpotifyRefresh>("https://accounts.spotify.com/api/token", {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: new URLSearchParams({
-              grant_type: "refresh_token",
-              refresh_token: acc[0].refreshToken!,
-              client_id: env.SPOTIFY_CLIENT_ID,
-            }),
-          })
-          .json();
-
-        await db
-          .update(account)
-          .set({
-            accessToken: refreshDetails.access_token,
-            accessTokenExpiresAt: new Date(Date.now() + refreshDetails.expires_in * 1000),
-            refreshToken: refreshDetails.refresh_token,
-          })
-          .where(eq(account.id, acc[0].id));
-        token = refreshDetails.access_token;
-      }
+      const token = await spotifyUserAccessToken(acc[0]);
 
       const topSongs = await ky
         .get<SpotifyTopTracks>(
@@ -224,7 +230,7 @@ export const router = new Hono<AuthRouter>({ strict: true })
       }
 
       const trackIds = rows[0].trackIds.join(",");
-      const accessToken = await spotifyAccessToken();
+      const accessToken = await spotifyServerAccessToken();
 
       const tracks = await ky
         .get(`https://api.spotify.com/v1/tracks?ids=${trackIds}`, {
@@ -233,10 +239,6 @@ export const router = new Hono<AuthRouter>({ strict: true })
           },
         })
         .json<Tracks>();
-
-      // const data = tracks.tracks.map((track) => ({
-      //   title:
-      // }));
 
       return c.json({ tracks: tracks.tracks, userName });
     },
@@ -257,20 +259,61 @@ export const router = new Hono<AuthRouter>({ strict: true })
 
     return c.json({ shareLink: shareInfo[0].link });
   })
-  .post("/test", vValidator("json", v.array(v.pipe(v.string(), v.minLength(1)))), async (c) => {
-    const trackIds = c.req.valid("json").join(",");
+  .post("/playlist", vValidator("json", v.array(v.pipe(v.string(), v.minLength(1)))), async (c) => {
+    const user = c.get("user");
+    const session = c.get("session");
 
-    const accessToken = await spotifyAccessToken();
+    if (!user || !session) return c.json({ error: "Unauthorized" }, 401);
 
-    const tracks = await ky
-      .get(`https://api.spotify.com/v1/tracks?ids=${trackIds}`, {
+    const acc = await db.select().from(account).where(eq(account.userId, user.id));
+
+    if (!acc || !acc[0] || !acc[0].accessToken) return c.json({ error: "Unauthorized" }, 401);
+
+    let userName = user.name;
+    if (userName.includes(" ")) {
+      userName = userName.split(" ")[0];
+    }
+
+    const token = await spotifyUserAccessToken(acc[0]);
+
+    const res = await ky.post<{ id: string; external_urls: { spotify: string } }>(
+      `https://api.spotify.com/v1/users/${acc[0].accountId}/playlists`,
+      {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${token}`,
         },
-      })
-      .json<Tracks>();
+        json: {
+          name: `${userName}'s Top Songs`,
+          description: "Created by Vinylify",
+        },
+      },
+    );
 
-    return c.json(tracks.tracks);
+    if (!res.ok) {
+      return c.json({ error: "Failed to create playlist" }, 500);
+    }
+
+    const { id, external_urls } = await res.json();
+
+    const trackUris = c.req.valid("json");
+
+    const trackRes = await ky.post<{ id: string }>(
+      `https://api.spotify.com/v1/playlists/${id}/tracks`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        json: {
+          uris: trackUris,
+        },
+      },
+    );
+
+    if (!trackRes.ok) {
+      return c.json({ error: "Failed to add tracks to playlist" }, 500);
+    }
+
+    return c.json({ playlistName: `${userName}'s Top Songs`, url: external_urls.spotify });
   });
 
 const apiRouter = new Hono().route("/api", router);

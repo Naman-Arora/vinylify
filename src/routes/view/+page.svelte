@@ -3,17 +3,35 @@
   import Scene from "@components/3d/Scene.svelte";
   import { onMount } from "svelte";
   import { Canvas } from "@threlte/core";
+  import { toast } from "svelte-sonner";
 
   let { data } = $props();
 
+  const apiClient = makeAPIClient(fetch);
+
   let dialog = $state<HTMLDialogElement | null>(null);
   let shareMutating = $state(false);
+  let creatingPlaylist = $state(false);
   let dialogContent = $state({
     title: "Error",
     link: "",
     message: "An error occured while creating a shareable link of your vinyls. Please try again.",
     success: false,
   });
+
+  async function onCreatePlaylist() {
+    creatingPlaylist = true;
+    const res = await apiClient.playlist.$post({ json: data.info.items.map((item) => item.uri) });
+    if (res.ok) {
+      const { url } = await res.json();
+      toast.success("Playlist created successfully!", {
+        action: { label: "Open", onClick: () => window.open(url, "_blank") },
+      });
+    } else {
+      toast.error("Failed to create playlist. Please try again.");
+    }
+    creatingPlaylist = false;
+  }
 
   async function onShare() {
     if (dialogContent.success) {
@@ -23,7 +41,7 @@
 
     shareMutating = true;
 
-    const res = await makeAPIClient(fetch).share.$post({
+    const res = await apiClient.share.$post({
       json: data.info.items.map((item) => item.id),
     });
 
@@ -61,7 +79,7 @@
     {#if dialogContent.link}
       <div
         class={[
-          "flex w-full flex-row items-center justify-between rounded bg-gray-200 p-2 font-mono text-black text-sm",
+          "flex w-full flex-col items-center justify-between overflow-hidden rounded bg-gray-200 p-2 font-mono text-sm text-black sm:flex-row",
         ]}
       >
         {dialogContent.link}
@@ -118,11 +136,48 @@
 </dialog>
 
 <div class="absolute top-0 right-0 z-20 flex flex-row gap-4 p-4">
-  <select class="select select-primary">
+  <button
+    class={["btn btn-soft btn-primary", creatingPlaylist ? "btn-disabled" : ""]}
+    onclick={onCreatePlaylist}
+    disabled={creatingPlaylist}
+    >Create Playlist
+    {#if shareMutating}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide-loader-circle size-6 animate-spin"
+        ><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg
+      >
+    {:else}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide-list-music size-6"
+        ><path d="M21 15V6" /><path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path
+          d="M12 12H3"
+        /><path d="M16 6H3" /><path d="M12 18H3" /></svg
+      >
+    {/if}
+  </button>
+  <!-- <select class="select select-primary">
     <option>Short Term</option>
-    <option>Mediun Term</option>
+    <option>Medium Term</option>
     <option selected>Long Term</option>
-  </select>
+  </select> -->
   <button
     class={["btn btn-soft btn-secondary", shareMutating ? "btn-disabled" : ""]}
     disabled={shareMutating}
