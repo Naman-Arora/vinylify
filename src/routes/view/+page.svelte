@@ -1,12 +1,18 @@
 <script lang="ts">
+  import { Vinylify } from "$lib/vinylify.svelte";
   import { makeAPIClient } from "$lib/api/client";
   import Scene from "@components/3d/Scene.svelte";
+  import SongInfo from "@components/SongInfo.svelte";
   import { onMount } from "svelte";
-  import { Canvas } from "@threlte/core";
   import { toast } from "svelte-sonner";
-  // import SongInfo from "@components/SongInfo.svelte";
+  import { Canvas } from "@threlte/core";
 
   let { data } = $props();
+  const vinylify = new Vinylify(data.tracks);
+
+  $effect(() => {
+    vinylify.tracks = data.tracks;
+  });
 
   const apiClient = makeAPIClient(fetch);
 
@@ -20,14 +26,9 @@
     success: false,
   });
 
-  // let songDetails = $derived.by(() => {
-  //   if (songIndex) return data.info.items[songIndex];
-  //   return null;
-  // });
-
   async function onCreatePlaylist() {
     creatingPlaylist = true;
-    const res = await apiClient.playlist.$post({ json: data.info.items.map((item) => item.uri) });
+    const res = await apiClient.playlist.$post({ json: vinylify.tracks.map((item) => item.uri) });
     if (res.ok) {
       const { url } = await res.json();
       toast.success("Playlist created successfully!", {
@@ -48,7 +49,7 @@
     shareMutating = true;
 
     const res = await apiClient.share.$post({
-      json: data.info.items.map((item) => item.id),
+      json: vinylify.tracks.map((item) => item.id),
     });
 
     if (res.ok) {
@@ -179,11 +180,7 @@
       >
     {/if}
   </button>
-  <!-- <select class="select select-primary">
-    <option>Short Term</option>
-    <option>Medium Term</option>
-    <option selected>Long Term</option>
-  </select> -->
+
   <button
     class={["btn btn-soft btn-secondary", shareMutating ? "btn-disabled" : ""]}
     disabled={shareMutating}
@@ -224,23 +221,10 @@
   </button>
 </div>
 
-<!-- <SongInfo
-  songFocused={songDetails === null ? false : true}
-  songName={songDetails?.name}
-  artistName={songDetails?.album.artists[0].name}
-  albumName={songDetails?.album.name}
-/> -->
+<SongInfo {vinylify} />
 
 <main class="h-screen w-screen">
   <Canvas>
-    <Scene
-      topTracks={data.info.items.map((track) => ({
-        imageUrl: track.album.images[0].url,
-        title: `${track.name} – ${track.album.artists[0].name}`
-          .replace(/[[(].*?[\])]/g, "")
-          .replace(/\s+/g, " ")
-          .trim(),
-      }))}
-    />
+    <Scene {vinylify} />
   </Canvas>
 </main>

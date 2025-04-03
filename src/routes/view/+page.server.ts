@@ -10,7 +10,9 @@ export const load: PageServerLoad = async ({ fetch }) => {
     redirect(302, "/");
   }
 
+  const { items } = await data.json();
+
   return {
-    info: await data.json(),
+    tracks: items,
   };
 };

@@ -6,3 +6,8 @@
   --font-dm-sans: "DM Sans", sans-serif;
   --font-schibsted-grotesk: "Schibsted Grotesk", sans-serif;
 }
+
+html,
+body {
+  overscroll-behavior-x: none;
+}

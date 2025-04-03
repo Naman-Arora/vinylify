@@ -7,7 +7,7 @@ import { Hono } from "hono";
 import * as v from "valibot";
 import { eq } from "drizzle-orm";
 import { vValidator } from "@hono/valibot-validator";
-import { type Tracks } from "@spotify/web-api-ts-sdk";
+import { type Page, type Track, type Tracks } from "@spotify/web-api-ts-sdk";
 import { trimTrailingSlash } from "hono/trailing-slash";
 
 const SpotifyRefresh = v.object({
@@ -19,76 +19,6 @@ const SpotifyRefresh = v.object({
 });
 
 type SpotifyRefresh = v.InferOutput<typeof SpotifyRefresh>;
-
-const SpotifyArtist = v.object({
-  external_urls: v.object({
-    spotify: v.string(),
-  }),
-  href: v.string(),
-  id: v.string(),
-  name: v.string(),
-  type: v.string(),
-  uri: v.string(),
-});
-
-const SpotifyAlbum = v.object({
-  album_type: v.string(),
-  total_tracks: v.number(),
-  available_markets: v.array(v.string()),
-  external_urls: v.object({
-    spotify: v.string(),
-  }),
-  href: v.string(),
-  id: v.string(),
-  images: v.array(
-    v.object({
-      url: v.string(),
-      height: v.nullable(v.number()),
-      width: v.nullable(v.number()),
-    }),
-  ),
-  name: v.string(),
-  release_date: v.string(),
-  release_date_precision: v.string(),
-  restrictions: v.nullable(
-    v.object({
-      reason: v.string(),
-    }),
-  ),
-  type: v.string(),
-  uri: v.string(),
-  artists: v.array(SpotifyArtist),
-});
-
-const SpotifyTopTracks = v.object({
-  href: v.string(),
-  limit: v.number(),
-  offset: v.number(),
-  total: v.number(),
-  next: v.nullable(v.string()),
-  previous: v.nullable(v.string()),
-  items: v.array(
-    v.object({
-      album: SpotifyAlbum,
-      external_urls: v.object({
-        spotify: v.string(),
-      }),
-      followers: v.object({
-        href: v.nullable(v.string()),
-        total: v.number(),
-      }),
-      genres: v.array(v.string()),
-      href: v.nullable(v.string()),
-      id: v.string(),
-      name: v.string(),
-      popularity: v.number(),
-      type: v.string(),
-      uri: v.string(),
-    }),
-  ),
-});
-
-type SpotifyTopTracks = v.InferOutput<typeof SpotifyTopTracks>;
 
 type User = typeof auth.$Infer.Session.user;
 type Session = typeof auth.$Infer.Session.session;
@@ -201,7 +131,7 @@ export const router = new Hono<AuthRouter>({ strict: true })
       const token = await spotifyUserAccessToken(acc[0]);
 
       const topSongs = await ky
-        .get<SpotifyTopTracks>(
+        .get<Page<Track>>(
           `https://api.spotify.com/v1/me/top/tracks?limit=${limit}&time_range=${time_range}`,
           {
             headers: {

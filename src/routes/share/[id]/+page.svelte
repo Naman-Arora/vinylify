@@ -1,9 +1,17 @@
 <script lang="ts">
-  import Scene from "@components/3d/Scene.svelte";
   import { Canvas } from "@threlte/core";
   import { onMount } from "svelte";
+  import { Vinylify } from "$lib/vinylify.svelte";
+  import Scene from "@components/3d/Scene.svelte";
+  import SongInfo from "@components/SongInfo.svelte";
 
   let { data } = $props();
+
+  const vinylify = new Vinylify(data.tracks);
+
+  $effect(() => {
+    vinylify.tracks = data.tracks;
+  });
 
   onMount(() => {
     document.body.classList.add("overflow-hidden");
@@ -20,8 +28,10 @@
   <p>{data.userName}'s Top Tracks</p>
 </div>
 
+<SongInfo {vinylify} />
+
 <main class="h-screen w-screen">
   <Canvas>
-    <Scene topTracks={data.tracks} />
+    <Scene {vinylify} />
   </Canvas>
 </main>

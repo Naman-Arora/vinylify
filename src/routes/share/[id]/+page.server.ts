@@ -12,14 +12,5 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
     return error(404, { message: "Link does not exist" });
   }
 
-  const tracks = data.tracks.map((track) => ({
-    id: track.id,
-    title: `${track.name} – ${track.artists[0].name}`
-      .replace(/[[(].*?[\])]/g, "")
-      .replace(/\s+/g, " ")
-      .trim(),
-    imageUrl: track.album.images[0].url,
-  }));
-
-  return { tracks, userName: data.userName };
+  return { tracks: data.tracks, userName: data.userName };
 };
