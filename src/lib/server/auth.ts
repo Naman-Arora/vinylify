@@ -9,6 +9,7 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
+  secret: env.BETTER_AUTH_SECRET,
 
   // https://www.better-auth.com/docs/concepts/session-management#session-caching
   session: {
@@ -20,10 +21,10 @@ export const auth = betterAuth({
 
   // https://www.better-auth.com/docs/concepts/oauth
   socialProviders: {
-    github: {
-      clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET,
-    },
+    // github: {
+    //   clientId: env.GITHUB_CLIENT_ID,
+    //   clientSecret: env.GITHUB_CLIENT_SECRET,
+    // },
     spotify: {
       clientId: env.SPOTIFY_CLIENT_ID,
       clientSecret: env.SPOTIFY_CLIENT_SECRET,
