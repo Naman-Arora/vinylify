@@ -28,7 +28,9 @@
 
   async function onCreatePlaylist() {
     creatingPlaylist = true;
-    const res = await apiClient.playlist.$post({ json: vinylify.tracks.map((item) => item.uri) });
+    const res = await apiClient.playlist.$post({
+      json: { uris: vinylify.tracks.map((item) => item.uri) },
+    });
     if (res.ok) {
       const { url } = await res.json();
       toast.success("Playlist created successfully!", {

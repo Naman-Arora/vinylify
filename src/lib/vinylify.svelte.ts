@@ -26,5 +26,3 @@ export class Vinylify {
     this.tracks = tracks;
   }
 }
-
-// export default new Vinylify();

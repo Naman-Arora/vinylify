@@ -10,7 +10,7 @@
 
 <div
   class={[
-    "font-dm-sans absolute top-[95%] left-[50%] z-10 flex w-[98%] -translate-x-1/2 -translate-y-[100%] flex-col justify-center gap-0.5 overflow-hidden rounded-lg border border-gray-200 bg-white/70 bg-clip-padding text-center text-black backdrop-blur-sm backdrop-filter transition-all duration-250 ease-in-out sm:w-[80%] md:top-[98.5%] md:w-[60%] lg:w-[40%]",
+    "font-dm-sans absolute top-[98.5%] left-[50%] z-10 flex w-[98%] -translate-x-1/2 -translate-y-[100%] flex-col justify-center gap-0.5 overflow-hidden rounded-lg border border-gray-200 bg-white/70 bg-clip-padding text-center text-black backdrop-blur-sm backdrop-filter transition-all duration-250 ease-in-out sm:w-[80%] md:w-[60%] lg:w-[40%]",
     vinylify.focusedIndex === null ? "h-4" : "h-20 delay-200",
   ]}
 >

@@ -189,62 +189,71 @@ export const router = new Hono<AuthRouter>({ strict: true })
 
     return c.json({ shareLink: shareInfo[0].link });
   })
-  .post("/playlist", vValidator("json", v.array(v.pipe(v.string(), v.minLength(1)))), async (c) => {
-    const user = c.get("user");
-    const session = c.get("session");
+  .post(
+    "/playlist",
+    vValidator(
+      "json",
+      v.object({
+        uris: v.array(v.pipe(v.string(), v.minLength(1))),
+        name: v.optional(v.pipe(v.string(), v.minLength(1))),
+      }),
+    ),
+    async (c) => {
+      const user = c.get("user");
+      const session = c.get("session");
 
-    if (!user || !session) return c.json({ error: "Unauthorized" }, 401);
+      if (!user || !session) return c.json({ error: "Unauthorized" }, 401);
 
-    const acc = await db.select().from(account).where(eq(account.userId, user.id));
+      const acc = await db.select().from(account).where(eq(account.userId, user.id));
 
-    if (!acc || !acc[0] || !acc[0].accessToken) return c.json({ error: "Unauthorized" }, 401);
+      if (!acc || !acc[0] || !acc[0].accessToken) return c.json({ error: "Unauthorized" }, 401);
 
-    let userName = user.name;
-    if (userName.includes(" ")) {
-      userName = userName.split(" ")[0];
-    }
+      let userName = user.name;
+      if (userName.includes(" ")) {
+        userName = userName.split(" ")[0];
+      }
 
-    const token = await spotifyUserAccessToken(acc[0]);
+      const token = await spotifyUserAccessToken(acc[0]);
+      const { name, uris } = c.req.valid("json");
 
-    const res = await ky.post<{ id: string; external_urls: { spotify: string } }>(
-      `https://api.spotify.com/v1/users/${acc[0].accountId}/playlists`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await ky.post<{ id: string; external_urls: { spotify: string } }>(
+        `https://api.spotify.com/v1/users/${acc[0].accountId}/playlists`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          json: {
+            name: name ?? `${userName}'s Top Songs`,
+            description: "Created by Vinylify",
+          },
         },
-        json: {
-          name: `${userName}'s Top Songs`,
-          description: "Created by Vinylify",
+      );
+
+      if (!res.ok) {
+        return c.json({ error: "Failed to create playlist" }, 500);
+      }
+
+      const { id, external_urls } = await res.json();
+
+      const trackRes = await ky.post<{ id: string }>(
+        `https://api.spotify.com/v1/playlists/${id}/tracks`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          json: {
+            uris,
+          },
         },
-      },
-    );
+      );
 
-    if (!res.ok) {
-      return c.json({ error: "Failed to create playlist" }, 500);
-    }
+      if (!trackRes.ok) {
+        return c.json({ error: "Failed to add tracks to playlist" }, 500);
+      }
 
-    const { id, external_urls } = await res.json();
-
-    const trackUris = c.req.valid("json");
-
-    const trackRes = await ky.post<{ id: string }>(
-      `https://api.spotify.com/v1/playlists/${id}/tracks`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        json: {
-          uris: trackUris,
-        },
-      },
-    );
-
-    if (!trackRes.ok) {
-      return c.json({ error: "Failed to add tracks to playlist" }, 500);
-    }
-
-    return c.json({ playlistName: `${userName}'s Top Songs`, url: external_urls.spotify });
-  });
+      return c.json({ playlistName: `${userName}'s Top Songs`, url: external_urls.spotify });
+    },
+  );
 
 const apiRouter = new Hono().route("/api", router);
 
