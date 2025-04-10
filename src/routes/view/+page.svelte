@@ -10,10 +10,6 @@
   let { data } = $props();
   const vinylify = new Vinylify(data.tracks);
 
-  $effect(() => {
-    vinylify.tracks = data.tracks;
-  });
-
   const apiClient = makeAPIClient(fetch);
 
   let dialog = $state<HTMLDialogElement | null>(null);
@@ -144,12 +140,21 @@
   </form>
 </dialog>
 
-<div class="absolute top-0 right-0 z-20 flex flex-row gap-4 p-4">
+<div class="absolute top-0 right-0 z-20 flex flex-row gap-2 p-4 md:gap-4">
+  <select
+    bind:value={() => vinylify.range, (v) => vinylify.onTimeRangeChange(v)}
+    class="select select-primary font-semibold"
+  >
+    <option disabled>Duration</option>
+    <option>Recent</option>
+    <option>Last 6 Months</option>
+    <option>All Time</option>
+  </select>
   <button
-    class={["btn btn-soft btn-primary", creatingPlaylist ? "btn-disabled" : ""]}
+    class={["btn btn-soft btn-secondary", creatingPlaylist && "btn-disabled"]}
     onclick={onCreatePlaylist}
     disabled={creatingPlaylist}
-    >Create Playlist
+    >Playlist
     {#if creatingPlaylist}
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -184,7 +189,7 @@
   </button>
 
   <button
-    class={["btn btn-soft btn-secondary", shareMutating ? "btn-disabled" : ""]}
+    class={["btn btn-soft btn-accent", shareMutating && "btn-disabled"]}
     disabled={shareMutating}
     onclick={onShare}
   >
