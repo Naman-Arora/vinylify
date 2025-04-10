@@ -19,14 +19,14 @@
 </svelte:head>
 
 <div
-  class="font-dm-sans flex min-h-screen flex-col items-center justify-center gap-4 bg-gradient-to-br from-purple-900 to-indigo-900 text-white"
+  class="font-dm-sans flex min-h-screen flex-col items-center justify-center gap-4 bg-gradient-to-br from-purple-900 to-indigo-900 text-white p-4"
 >
   <header class="flex flex-col gap-4">
     {#if userName}
       <p class="text-left text-2xl font-semibold">Hi {userName},</p>
     {/if}
     <h1 class="text-center text-6xl font-black">Welcome to Vinylify</h1>
-    <p class="text-center text-xl">Turn your top Spotify songs into vinyl records!</p>
+    <p class="text-center text-xl text-pretty">Turn your top Spotify songs into vinyl records!</p>
   </header>
 
   {#if $session.data}
