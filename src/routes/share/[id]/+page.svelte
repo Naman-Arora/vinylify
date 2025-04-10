@@ -49,7 +49,7 @@
 <div class="absolute top-2 right-2 z-20 flex flex-row gap-4">
   {#if $session.data}
     <button
-      class={["btn btn-soft btn-primary", creatingPlaylist ? "btn-disabled" : ""]}
+      class={["btn btn-soft btn-primary", creatingPlaylist && "btn-disabled"]}
       onclick={onCreatePlaylist}
       disabled={creatingPlaylist}
       >Create Playlist
@@ -86,7 +86,7 @@
       {/if}
     </button>
   {/if}
-  <p class="btn pointer-none bg-white">{title}</p>
+  <p class="btn bg-base-100 pointer-events-none cursor-default">{title}</p>
 </div>
 
 <SongInfo {vinylify} />
