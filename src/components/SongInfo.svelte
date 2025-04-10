@@ -27,17 +27,19 @@
       transition:fade={{ delay: vinylify.focusedIndex === null ? 0 : 200, duration: 250 }}
       class={["text-center"]}
     >
-      <a
-        href={vinylify.focusedSongDetails.external_urls.spotify}
-        target="_blank"
-        class="text-xl font-black hover:underline"
-      >
-        {vinylify.focusedSongDetails.name
-          ?.replace(/[[(].*?[\])]/g, "")
-          .replace(/\s+/g, " ")
-          .trim()}
-      </a>
-      <p class="font-base text-lg">
+      <p class="truncate px-2 md:px-4">
+        <a
+          href={vinylify.focusedSongDetails.external_urls.spotify}
+          target="_blank"
+          class="text-xl font-black hover:underline"
+        >
+          {vinylify.focusedSongDetails.name
+            ?.replace(/[[(].*?[\])]/g, "")
+            .replace(/\s+/g, " ")
+            .trim()}
+        </a>
+      </p>
+      <p class="truncate px-2 text-lg md:px-4">
         <a
           href={vinylify.focusedSongDetails.album.artists[0].external_urls.spotify}
           target="_blank"
