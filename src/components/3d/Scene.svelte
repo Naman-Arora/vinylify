@@ -6,16 +6,13 @@
     MeshStandardMaterial,
     ShaderMaterial,
     Vector2,
-    Mesh,
   } from "three";
   import { onMount } from "svelte";
-  import { Tween } from "svelte/motion";
-  import { quadInOut } from "svelte/easing";
   import { innerWidth } from "svelte/reactivity/window";
   import { T, useTask, useThrelte } from "@threlte/core";
   import { interactivity, ImageMaterial, Text, Suspense } from "@threlte/extras";
-  import { degreesToEuler } from "$lib/3d";
   import type { Vinylify } from "$lib/vinylify.svelte";
+  import { trimString, degreesToEuler } from "$lib/utils";
 
   interactivity();
 
@@ -38,59 +35,6 @@
   scene.background = COLORS.black;
 
   const whiteMeshMaterial = new MeshStandardMaterial({ color: COLORS.white });
-
-  class Card {
-    mesh = $state<Mesh | null>(null);
-    title: string;
-    imageUrl: string;
-    positionX: Tween<number>;
-    positionY: Tween<number>;
-    positionZ: Tween<number>;
-    rotationX: Tween<number>;
-    rotationY: Tween<number>;
-    rotationZ: Tween<number>;
-
-    constructor(
-      imageUrl: string,
-      title: string,
-      positionX: number = 0,
-      positionY: number = 0,
-      positionZ: number = 0,
-      rotationX: number = 0,
-      rotationY: number = 90,
-      rotationZ: number = 0,
-    ) {
-      this.title = title;
-      this.imageUrl = imageUrl;
-      this.positionX = new Tween(positionX, { easing: quadInOut });
-      this.positionY = new Tween(positionY, { easing: quadInOut });
-      this.positionZ = new Tween(positionZ, { easing: quadInOut });
-      this.rotationX = new Tween(rotationX, { easing: quadInOut });
-      this.rotationY = new Tween(rotationY, { easing: quadInOut });
-      this.rotationZ = new Tween(rotationZ, { easing: quadInOut });
-    }
-  }
-
-  const cam = {
-    posX: new Tween(0, { easing: quadInOut, duration: 500 }),
-    posY: new Tween(0.075, { easing: quadInOut, duration: 500 }),
-    posZ: new Tween(2.75, { easing: quadInOut, duration: 500 }),
-    zoom: new Tween(1, { easing: quadInOut, duration: 500 }),
-  };
-
-  const cards = $derived(
-    vinylify.tracks.map(
-      (track, index) =>
-        new Card(
-          track.album.images[0].url,
-          `${track.name} – ${track.album.artists[0].name}`
-            .replace(/[[(].*?[\])]/g, "")
-            .replace(/\s+/g, " ")
-            .trim(),
-          -0.5 + index * 0.175,
-        ),
-    ),
-  );
 
   const gridShaderMaterial = new ShaderMaterial({
     uniforms: {
@@ -157,16 +101,16 @@
 
     if ((innerWidth.current || Infinity) < 600) {
       vinylify.cardGroup.posX.set(0.22, { duration: 0 });
-      cam.posY.set(0, { duration: 0 });
+      vinylify.cam.posY.set(0, { duration: 0 });
     }
   });
 </script>
 
 <T.PerspectiveCamera
   makeDefault
-  position={[cam.posX.current, cam.posY.current, cam.posZ.current]}
+  position={[vinylify.cam.posX.current, vinylify.cam.posY.current, vinylify.cam.posZ.current]}
   rotation={degreesToEuler(0, 0, 0)}
-  zoom={cam.zoom.current}
+  zoom={vinylify.cam.zoom.current}
 />
 
 <T.AmbientLight color={COLORS.white} intensity={10} />
@@ -185,7 +129,8 @@
       vinylify.cardGroup.posZ.current,
     ]}
   >
-    {#each cards as card, i (i)}
+    <!-- {#each cards as card, i (i + card.title)} -->
+    {#each vinylify.cards as card, i (i + card.title)}
       <T.Group
         name={card.title}
         position={[card.positionX.current, card.positionY.current, card.positionZ.current]}
@@ -193,22 +138,14 @@
         onclick={(e) => {
           e.stopPropagation();
           if (vinylify.focusedIndex !== null && vinylify.focusedIndex !== i) return;
+          if (vinylify.focusedIndex === i) return vinylify.closeVinyl();
 
-          if (vinylify.focusedIndex === i) {
-            card.rotationY.set(90, { duration: 500 });
-            cam.zoom.set(1, { duration: 500 });
-            card.positionZ.set(0, { duration: 500, delay: 500 });
-            vinylify.cardGroup.posZ.set(0, { duration: 500, delay: 500 });
-
-            vinylify.focusedIndex = null;
-            return;
-          }
           const dist = PICTURE_BOX_WIDTH + 0.05;
           vinylify.cardGroup.posZ.set(-dist, { duration: 500 });
           card.positionZ.set(dist, { duration: 500 });
           vinylify.cardGroup.posX.set(-card.positionX.current, { duration: 500 });
           card.rotationY.set(0, { duration: 500, delay: 500 });
-          cam.zoom.set((innerWidth.current || Infinity) < 600 ? 0.75 : 1.5, {
+          vinylify.cam.zoom.set((innerWidth.current || Infinity) < 600 ? 0.75 : 1.5, {
             duration: 1500,
             delay: 500,
           });
@@ -216,14 +153,14 @@
         }}
       >
         <Text
-          text={card.title.toUpperCase()}
-          fontSize={0.05}
+          text={trimString(card.title.toUpperCase(), 45)}
+          fontSize={0.0475}
           color="black"
           position={[-PICTURE_TEXT_POS_X, 0, 0]}
           rotation={degreesToEuler(0, -90, -90)}
           anchorX="center"
           anchorY="middle"
-          font="https://cdn.jsdelivr.net/fontsource/fonts/outfit@latest/latin-400-normal.ttf"
+          font="https://cdn.jsdelivr.net/fontsource/fonts/cabin@latest/latin-500-normal.ttf"
         />
         <T.Mesh
           oncreate={(ref) => {
