@@ -189,6 +189,16 @@ export const router = new Hono<AuthRouter>({ strict: true })
 
     return c.json({ shareLink: shareInfo[0].link });
   })
+  .delete("/share", async (c) => {
+    const user = c.get("user");
+    const session = c.get("session");
+
+    if (!user || !session) return c.json({ message: "Unauthorized" }, 401);
+
+    await db.delete(share).where(eq(share.userId, user.id));
+
+    return c.status(204);
+  })
   .post(
     "/playlist",
     vValidator(
