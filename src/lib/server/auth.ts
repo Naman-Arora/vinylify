@@ -11,6 +11,12 @@ export const auth = betterAuth({
   }),
   secret: env.BETTER_AUTH_SECRET,
 
+  user: {
+    deleteUser: {
+      enabled: true,
+    },
+  },
+
   // https://www.better-auth.com/docs/concepts/session-management#session-caching
   session: {
     cookieCache: {
