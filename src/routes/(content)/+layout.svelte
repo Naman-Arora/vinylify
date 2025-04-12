@@ -1,20 +1,29 @@
 <script lang="ts">
+  import { authClient } from "$lib/auth-client";
   let { children } = $props();
+
+  const session = authClient.useSession();
 </script>
 
 <nav class="navbar bg-base-100 shadow-sm">
   <div class="flex-1">
     <a href="/" aria-label="home" class="btn btn-ghost text-xl font-bold">Vinylify</a>
   </div>
-
-  <a href="/profile" aria-label="Profile" class="btn btn-ghost btn-circle avatar">
-    <div class="w-10 rounded-full">
-      <img
-        alt="Tailwind CSS Navbar component"
-        src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-      />
-    </div>
-  </a>
+  {#if $session.data}
+    <a
+      href="/profile"
+      aria-label="Profile"
+      class={["btn btn-ghost btn-circle avatar", !$session.data.user.image && "avatar-placeholder"]}
+    >
+      <div class="bg-neutral text-neutral-content w-10 rounded-full">
+        {#if $session.data.user.image}
+          <img alt="Profile" src={$session.data.user.image} />
+        {:else}
+          <span class="text-xl">{$session.data.user.name.at(0)?.toLocaleUpperCase()}</span>
+        {/if}
+      </div>
+    </a>
+  {/if}
 </nav>
 {@render children()}
 <footer class="footer footer-horizontal footer-center bg-base-200 text-base-content rounded p-10">
