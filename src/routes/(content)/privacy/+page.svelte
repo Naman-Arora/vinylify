@@ -2,8 +2,8 @@
   <title>Vinylify | Privacy</title>
 </svelte:head>
 
-<main class="flex justify-center py-8">
-  <article class="prose prose-xl">
+<main class="flex justify-center py-8 px-4 md:px-8">
+  <article class="prose lg:prose-lg xl:prose-xl">
     <h1>Privacy Policy</h1>
     <p>
       Effective <strong>April 2025</strong>
