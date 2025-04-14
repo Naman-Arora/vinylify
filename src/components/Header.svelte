@@ -3,7 +3,7 @@
   const session = authClient.useSession();
 </script>
 
-<header class="navbar fixed top-0 left-0 bg-base-200/75 shadow-sm backdrop-blur-md">
+<header class="navbar bg-base-200/75 fixed top-0 left-0 shadow-sm backdrop-blur-md">
   <div class="flex-1">
     <a href="/" aria-label="home" class="btn btn-ghost text-xl font-bold">Vinylify</a>
   </div>

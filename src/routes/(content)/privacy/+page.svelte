@@ -2,7 +2,7 @@
   <title>Vinylify | Privacy</title>
 </svelte:head>
 
-<main class="flex justify-center py-8 px-4 md:px-8">
+<main class="flex justify-center px-4 py-8 md:px-8">
   <article class="prose lg:prose-lg xl:prose-xl">
     <h1>Privacy Policy</h1>
     <p>

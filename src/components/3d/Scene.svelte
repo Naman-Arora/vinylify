@@ -6,12 +6,12 @@
   import { onMount } from "svelte";
   import { innerWidth } from "svelte/reactivity/window";
   import {
-      Color,
-      DoubleSide,
-      Material,
-      MeshStandardMaterial,
-      ShaderMaterial,
-      Vector2,
+    Color,
+    DoubleSide,
+    Material,
+    MeshStandardMaterial,
+    ShaderMaterial,
+    Vector2,
   } from "three";
 
   interactivity();

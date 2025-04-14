@@ -24,7 +24,7 @@
 
 <!-- <dialog bind:this={dialog}></dialog> -->
 
-<main class="flex-1 flex justify-center py-8">
+<main class="flex flex-1 justify-center py-8">
   <!-- <article class="prose prose-xl w-[65ch]">
     <h1>Profile</h1>
 
