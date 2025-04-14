@@ -1,5 +1,5 @@
-import { redirect } from "@sveltejs/kit";
 import { makeAPIClient } from "$lib/api/client";
+import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ fetch }) => {

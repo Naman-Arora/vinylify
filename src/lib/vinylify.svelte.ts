@@ -1,8 +1,8 @@
-import { makeAPIClient } from "./api/client";
-import { type Mesh } from "three";
-import { Tween } from "svelte/motion";
-import { quadInOut } from "svelte/easing";
 import { type Track } from "@spotify/web-api-ts-sdk";
+import { quadInOut } from "svelte/easing";
+import { Tween } from "svelte/motion";
+import { type Mesh } from "three";
+import { makeAPIClient } from "./api/client";
 
 type Range = "Recent" | "Last 6 Months" | "All Time";
 

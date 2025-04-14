@@ -1,6 +1,6 @@
 <script lang="ts">
   import { type Vinylify } from "$lib/vinylify.svelte";
-  import { fade, blur } from "svelte/transition";
+  import { blur, fade } from "svelte/transition";
 
   type Props = {
     vinylify: Vinylify;

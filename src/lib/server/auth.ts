@@ -1,8 +1,8 @@
-import { db } from "./db";
-import { PUBLIC_BASE_URL } from "$env/static/public";
 import { BETTER_AUTH_SECRET, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } from "$env/static/private";
+import { PUBLIC_BASE_URL } from "$env/static/public";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { db } from "./db";
 
 export const auth = betterAuth({
   baseURL: PUBLIC_BASE_URL,

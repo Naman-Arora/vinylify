@@ -52,7 +52,7 @@
         >
       </a>
     </div>
-    <button
+    <!-- <button
       onclick={async () => {
         await authClient.signOut();
       }}
@@ -96,7 +96,7 @@
         /></svg
       >
       Sign in with Spotify
-    </button>
+    </button> -->
   {/if}
 </div>
 <Footer />

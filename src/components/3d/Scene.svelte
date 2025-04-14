@@ -1,18 +1,18 @@
 <script lang="ts">
-  import {
-    Color,
-    DoubleSide,
-    Material,
-    MeshStandardMaterial,
-    ShaderMaterial,
-    Vector2,
-  } from "three";
+  import { degreesToEuler, trimString } from "$lib/utils";
+  import type { Vinylify } from "$lib/vinylify.svelte";
+  import { T, useTask, useThrelte } from "@threlte/core";
+  import { ImageMaterial, interactivity, Suspense, Text } from "@threlte/extras";
   import { onMount } from "svelte";
   import { innerWidth } from "svelte/reactivity/window";
-  import { T, useTask, useThrelte } from "@threlte/core";
-  import { interactivity, ImageMaterial, Text, Suspense } from "@threlte/extras";
-  import type { Vinylify } from "$lib/vinylify.svelte";
-  import { trimString, degreesToEuler } from "$lib/utils";
+  import {
+      Color,
+      DoubleSide,
+      Material,
+      MeshStandardMaterial,
+      ShaderMaterial,
+      Vector2,
+  } from "three";
 
   interactivity();
 

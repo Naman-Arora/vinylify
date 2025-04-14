@@ -1,6 +1,6 @@
-import { user } from "./auth.schema";
 import { jsonb, pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 import { customAlphabet } from "nanoid";
+import { user } from "./auth.schema";
 
 const nanoid = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 7);
 
