@@ -103,6 +103,14 @@
       vinylify.cardGroup.posX.set(0.22, { duration: 0 });
       vinylify.cam.posY.set(0, { duration: 0 });
     }
+
+    document.body.classList.add("overflow-hidden");
+    document.querySelector("canvas")?.addEventListener("click", (event) => {
+      if (vinylify.focusedIndex !== null) {
+        vinylify.closeVinyl();
+        event.stopPropagation();
+      }
+    });
   });
 </script>
 
@@ -137,9 +145,6 @@
         rotation={degreesToEuler(0, card.rotationY.current, 0)}
         onclick={(e) => {
           e.stopPropagation();
-          if (vinylify.focusedIndex !== null && vinylify.focusedIndex !== i) return;
-          if (vinylify.focusedIndex === i) return vinylify.closeVinyl();
-
           const dist = PICTURE_BOX_WIDTH + 0.05;
           vinylify.cardGroup.posZ.set(-dist, { duration: 500 });
           card.positionZ.set(dist, { duration: 500 });
