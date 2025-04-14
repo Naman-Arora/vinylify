@@ -1,6 +1,6 @@
 import { db } from "./db";
-import { env } from "$env/dynamic/private";
 import { PUBLIC_BASE_URL } from "$env/static/public";
+import { BETTER_AUTH_SECRET, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } from "$env/static/private";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
@@ -9,7 +9,7 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
-  secret: env.BETTER_AUTH_SECRET,
+  secret: BETTER_AUTH_SECRET,
 
   user: {
     deleteUser: {
@@ -32,8 +32,8 @@ export const auth = betterAuth({
     //   clientSecret: env.GITHUB_CLIENT_SECRET,
     // },
     spotify: {
-      clientId: env.SPOTIFY_CLIENT_ID,
-      clientSecret: env.SPOTIFY_CLIENT_SECRET,
+      clientId: SPOTIFY_CLIENT_ID,
+      clientSecret: SPOTIFY_CLIENT_SECRET,
       scope: [
         "user-read-email",
         "user-read-private",
