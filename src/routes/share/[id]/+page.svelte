@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { toast } from "svelte-sonner";
-  import { Canvas } from "@threlte/core";
+  import { makeAPIClient } from "$lib/api/client";
   import { authClient } from "$lib/auth-client";
   import { Vinylify } from "$lib/vinylify.svelte";
-  import { makeAPIClient } from "$lib/api/client";
   import Scene from "@components/3d/Scene.svelte";
   import SongInfo from "@components/SongInfo.svelte";
+  import { Canvas } from "@threlte/core";
+  import { toast } from "svelte-sonner";
 
   let { data } = $props();
   const session = authClient.useSession();
@@ -36,10 +35,6 @@
     }
     creatingPlaylist = false;
   }
-
-  onMount(() => {
-    document.body.classList.add("overflow-hidden");
-  });
 </script>
 
 <svelte:head>

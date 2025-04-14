@@ -1,11 +1,10 @@
 <script lang="ts">
-  import { Vinylify } from "$lib/vinylify.svelte";
   import { makeAPIClient } from "$lib/api/client";
+  import { Vinylify } from "$lib/vinylify.svelte";
   import Scene from "@components/3d/Scene.svelte";
   import SongInfo from "@components/SongInfo.svelte";
-  import { onMount } from "svelte";
-  import { toast } from "svelte-sonner";
   import { Canvas } from "@threlte/core";
+  import { toast } from "svelte-sonner";
 
   let { data } = $props();
   const vinylify = new Vinylify(data.tracks);
@@ -62,10 +61,6 @@
     shareMutating = false;
     dialog?.showModal();
   }
-
-  onMount(() => {
-    document.body.classList.add("overflow-hidden");
-  });
 </script>
 
 <svelte:head>
