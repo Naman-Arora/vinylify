@@ -5,7 +5,7 @@
   const session = authClient.useSession();
 </script>
 
-<nav class="navbar bg-base-100 shadow-sm">
+<header class="navbar fixed bg-white/75 backdrop-blur-md top-0 left-0 shadow-sm">
   <div class="flex-1">
     <a href="/" aria-label="home" class="btn btn-ghost text-xl font-bold">Vinylify</a>
   </div>
@@ -24,7 +24,8 @@
       </div>
     </a>
   {/if}
-</nav>
+</header>
+<div class="mt-16"></div>
 {@render children()}
 <footer class="footer footer-horizontal footer-center bg-base-200 text-base-content rounded p-10">
   <nav class="grid grid-flow-col gap-4">
