@@ -15,7 +15,7 @@
       to see your top songs. Add your top songs into a playlist by clicking the
       <em>add playlist</em>
       button, and share your top songs with your friends by clicking the <em>share</em> button. Copy
-      your unique share link and send it to your friends to showcase your tops songs!
+      your unique share link and send it to your friends to showcase your top songs!
     </p>
     <p>
       For example, click <a href="https://vinylify.naman.zip/share/RwNohef">here</a> to see my top songs!

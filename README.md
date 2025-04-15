@@ -2,7 +2,7 @@
 
 **[Vinylify](https://vinylify.naman.zip/)** is a music service that allows you and your friends to discover and share your top songs through vinyl records.
 
-To get started, visit the [website](https://vinylify.naman.zip/) and login with your Spotify account. Then, visit the [view](https://vinylify.naman.zip/view) page to see your top songs. Add your top songs into a playlist by clicking the _add playlist_ button, and share your top songs with your friends by clicking the _share_ button. Copy your unique share link and send it to your friends to showcase your tops songs!
+To get started, visit the [website](https://vinylify.naman.zip/) and login with your Spotify account. Then, visit the [view](https://vinylify.naman.zip/view) page to see your top songs. Add your top songs into a playlist by clicking the _add playlist_ button, and share your top songs with your friends by clicking the _share_ button. Copy your unique share link and send it to your friends to showcase your top songs!
 
 For example, click [here](https://vinylify.naman.zip/share/RwNohef) to see my top songs!
 
