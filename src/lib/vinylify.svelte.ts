@@ -89,7 +89,7 @@ export class Vinylify {
 
   range = $state<Range>("All Time");
 
-  private timeRange = $derived.by<"short_term" | "medium_term" | "long_term">(() => {
+  timeRange = $derived.by<"short_term" | "medium_term" | "long_term">(() => {
     if (this.range === "Recent") return "short_term";
     if (this.range === "Last 6 Months") return "medium_term";
     return "long_term";
