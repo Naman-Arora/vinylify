@@ -173,22 +173,36 @@ export const router = new Hono<AuthRouter>({ strict: true })
       return c.json({ tracks: tracks.tracks, userName });
     },
   )
-  .post("/share", vValidator("json", v.array(v.pipe(v.string(), v.minLength(1)))), async (c) => {
-    const user = c.get("user");
-    const session = c.get("session");
+  .post(
+    "/share",
+    vValidator(
+      "json",
+      v.object({
+        trackIds: v.array(v.pipe(v.string(), v.minLength(1))),
+        timeRange: v.union([
+          v.literal("short_term"),
+          v.literal("medium_term"),
+          v.literal("long_term"),
+        ]),
+      }),
+    ),
+    async (c) => {
+      const user = c.get("user");
+      const session = c.get("session");
 
-    if (!user || !session) return c.json({ message: "Unauthorized" }, 401);
+      if (!user || !session) return c.json({ message: "Unauthorized" }, 401);
 
-    const trackIds = c.req.valid("json");
+      const { trackIds, timeRange } = c.req.valid("json");
 
-    const shareInfo = await db
-      .insert(share)
-      .values({ userId: user.id, trackIds })
-      .onConflictDoUpdate({ target: share.userId, set: { trackIds } })
-      .returning({ link: share.id });
+      const shareInfo = await db
+        .insert(share)
+        .values({ userId: user.id, trackIds, timeRange })
+        .onConflictDoUpdate({ target: share.userId, set: { trackIds, timeRange } })
+        .returning({ link: share.id });
 
-    return c.json({ shareLink: shareInfo[0].link });
-  })
+      return c.json({ shareLink: shareInfo[0].link });
+    },
+  )
   .delete("/share", async (c) => {
     const user = c.get("user");
     const session = c.get("session");
