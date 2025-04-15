@@ -212,6 +212,7 @@ export const router = new Hono<AuthRouter>({ strict: true })
     await db.delete(share).where(eq(share.userId, user.id));
 
     return c.status(204);
+    return c.body(null, 204);
   })
   .post(
     "/playlist",
