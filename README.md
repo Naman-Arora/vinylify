@@ -21,6 +21,7 @@ Vinylify is built using the following technologies:
 - [SvelteKit](https://kit.svelte.dev/), as the Javascript framework
 - [Threlte](https://threlte.xyz/) and [Three.js](https://threejs.org/), for 3D graphics
 - [Tailwind CSS](https://tailwindcss.com/) and [DaisyUI](https://daisyui.com/), for styling
+- [Lucide](https://lucide.dev/) and [Tabler Icons](https://tabler-icons.io/), for icons
 - [Hono](https://hono.dev/), for the api and api client
 - [Spotify Developer API](https://developer.spotify.com/), for user music data
 - [Better-Auth](https://better-auth.com/), for authentication and authorization

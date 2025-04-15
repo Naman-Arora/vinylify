@@ -49,6 +49,10 @@
         <a href="https://tailwindcss.com/">Tailwind CSS</a> and
         <a href="https://daisyui.com/">DaisyUI</a>, for styling
       </li>
+      <li>
+        <a href="https://lucide.dev/">Lucide</a> and
+        <a href="https://tabler-icons.io/">Tabler Icons</a>, for icons
+      </li>
       <li><a href="https://hono.dev/">Hono</a>, for the api and api client</li>
       <li>
         <a href="https://developer.spotify.com/">Spotify Developer API</a>, for user music data
