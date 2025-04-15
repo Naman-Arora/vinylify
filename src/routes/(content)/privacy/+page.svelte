@@ -83,7 +83,7 @@
       <h2>Contact</h2>
       <p>
         If you have questions or concerns, please feel free to <a
-          href="mailto:contact@namanarora.net">contact me</a
+          href="mailto:vinylify@namanarora.net">contact me</a
         >.
       </p>
     </section>

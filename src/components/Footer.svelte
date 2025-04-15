@@ -26,7 +26,7 @@
           /><path d="M17 10l1 4l1.5 -4l1.5 4l1 -4" /><path d="M9.5 10l1 4l1.5 -4l1.5 4l1 -4" /></svg
         >
       </a>
-      <a href="mailto:contact@namanarora.net" aria-label="Email Me">
+      <a href="mailto:vinylify@namanarora.net" aria-label="Email Me">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
