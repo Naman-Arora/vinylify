@@ -44,7 +44,6 @@
     }
 
     shareMutating = true;
-
     const res = await apiClient.share.$post({
       json: { trackIds: vinylify.tracks.map((item) => item.id), timeRange: vinylify.timeRange },
     });
@@ -149,7 +148,7 @@
     class={["btn btn-soft btn-secondary", creatingPlaylist && "btn-disabled"]}
     onclick={onCreatePlaylist}
     disabled={creatingPlaylist}
-    >Playlist
+    >Add Playlist
     {#if creatingPlaylist}
       <svg
         xmlns="http://www.w3.org/2000/svg"
