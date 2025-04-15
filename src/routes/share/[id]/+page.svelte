@@ -51,32 +51,22 @@
       {#if creatingPlaylist}
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
           viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="lucide-loader-circle size-6 animate-spin"
+          class="lucide-loader-circle size-6 animate-spin fill-none stroke-current stroke-2"
           ><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg
         >
       {:else}
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
           viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="lucide-list-music size-6"
-          ><path d="M21 15V6" /><path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path
-            d="M12 12H3"
-          /><path d="M16 6H3" /><path d="M12 18H3" /></svg
+          class="icon-tabler-playlist-add size-6 fill-none stroke-current stroke-2"
+          ><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M19 8h-14" /><path
+            d="M5 12h9"
+          /><path d="M11 16h-6" /><path d="M15 16h6" /><path d="M18 13v6" /></svg
         >
       {/if}
     </button>
