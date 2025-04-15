@@ -22,6 +22,9 @@ export const share = pgTable(
       .defaultNow()
       .notNull()
       .$onUpdate(() => new Date()),
+    timeRange: text("time_range", { enum: ["short_term", "medium_term", "long_term"] })
+      .notNull()
+      .default("long_term"),
   },
   (table) => [uniqueIndex("id_index").on(table.id)],
 );
