@@ -46,7 +46,7 @@
     shareMutating = true;
 
     const res = await apiClient.share.$post({
-      json: vinylify.tracks.map((item) => item.id),
+      json: { trackIds: vinylify.tracks.map((item) => item.id), timeRange: vinylify.timeRange },
     });
 
     if (res.ok) {
