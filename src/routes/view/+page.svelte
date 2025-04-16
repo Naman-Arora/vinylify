@@ -53,7 +53,7 @@
       const { shareLink } = await res.json();
       dialogContent = {
         title: "Success",
-        link: `${window.location.protocol}//${window.location.host}/share/${shareLink}`,
+        link: `${window.location.host}/s/${shareLink}`,
         message: "Shareable link created successfully, make sure to show your friends!",
         success: true,
       };
