@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
   const data = await api["top-tracks"].$get({ query: {} });
 
   if (!data.ok) {
-    redirect(302, "/");
+    throw redirect(302, "/");
   }
 
   const { items } = await data.json();
