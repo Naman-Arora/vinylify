@@ -3,10 +3,10 @@
 </svelte:head>
 
 <main class="flex justify-center px-4 py-8 md:px-8">
-  <article class="prose lg:prose-lg xl:prose-xl">
+  <article class="prose lg:prose-lg xl:prose-xl prose-a:hover:text-accent">
     <h1 id="about-vinylify">About Vinylify</h1>
     <p>
-      <strong><a href="https://vinylify.naman.zip/">Vinylify</a></strong> is a music service that allows
+      <a href="https://vinylify.naman.zip/">Vinylify</a> is a music service that allows
       you and your friends to discover and share your top songs through vinyl records.
     </p>
     <p>

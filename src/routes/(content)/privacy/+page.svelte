@@ -3,7 +3,7 @@
 </svelte:head>
 
 <main class="flex justify-center px-4 py-8 md:px-8">
-  <article class="prose lg:prose-lg xl:prose-xl">
+  <article class="prose lg:prose-lg xl:prose-xl prose-a:hover:text-accent">
     <h1>Privacy Policy</h1>
     <p>
       Effective <strong>April 2025</strong>
