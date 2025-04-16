@@ -211,7 +211,6 @@ export const router = new Hono<AuthRouter>({ strict: true })
 
     await db.delete(share).where(eq(share.userId, user.id));
 
-    return c.status(204);
     return c.body(null, 204);
   })
   .post(
@@ -278,7 +277,31 @@ export const router = new Hono<AuthRouter>({ strict: true })
 
       return c.json({ playlistName: `${userName}'s Top Songs`, url: external_urls.spotify });
     },
-  );
+  )
+  .get("/profile", async (c) => {
+    const user = c.get("user");
+    const session = c.get("session");
+
+    if (!user || !session) return c.json({ error: "Unauthorized" }, 401);
+
+    let topTracks: Tracks | null = null;
+    const shares = await db.select().from(share).where(eq(share.userId, user.id));
+
+    if (shares.length > 0) {
+      const { trackIds } = shares[0];
+      const accessToken = await spotifyServerAccessToken();
+
+      topTracks = await ky
+        .get(`https://api.spotify.com/v1/tracks?ids=${trackIds}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+        .json<Tracks>();
+    }
+
+    return c.json({ user, topTracks, share: shares.length > 0 ? shares[0] : null });
+  });
 
 const apiRouter = new Hono().route("/api", router);
 

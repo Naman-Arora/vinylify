@@ -1,12 +1,18 @@
-import { auth } from "$lib/server/auth";
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
+import { makeAPIClient } from "$lib/api/client";
 
-export const load: PageServerLoad = async ({ request: { headers } }) => {
-  const session = await auth.api.getSession({ headers });
-  if (!session) {
+export const load: PageServerLoad = async ({ fetch }) => {
+  const apiClient = makeAPIClient(fetch);
+  const res = await apiClient.profile.$get();
+
+  if (!res.ok) {
     throw redirect(302, "/");
   }
 
-  return {};
+  const profile = await res.json();
+
+  return {
+    profile,
+  };
 };
